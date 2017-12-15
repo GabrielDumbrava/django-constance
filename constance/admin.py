@@ -32,7 +32,7 @@ NUMERIC_WIDGET = forms.TextInput(attrs={'size': 10})
 
 INTEGER_LIKE = (fields.IntegerField, {'widget': NUMERIC_WIDGET})
 STRING_LIKE = (fields.CharField, {
-    'widget': forms.Textarea(attrs={'rows': 3}),
+    'widget': forms.TextInput(attrs={'size': 50, 'style': 'width: 300px;'}),
     'required': False,
 })
 
@@ -44,9 +44,9 @@ FIELDS = {
     datetime: (
         fields.SplitDateTimeField, {'widget': widgets.AdminSplitDateTime}
     ),
-    timedelta: (
-        fields.DurationField, {'widget': widgets.AdminTextInputWidget}
-    ),
+    # timedelta: (
+    #     fields.DurationField, {'widget': widgets.AdminTextInputWidget}
+    # ),
     date: (fields.DateField, {'widget': widgets.AdminDateWidget}),
     time: (fields.TimeField, {'widget': widgets.AdminTimeWidget}),
     float: (fields.FloatField, {'widget': NUMERIC_WIDGET}),
@@ -206,6 +206,7 @@ class ConstanceAdmin(admin.ModelAdmin):
             'is_datetime': isinstance(default, datetime),
             'is_checkbox': isinstance(form[name].field.widget, forms.CheckboxInput),
             'is_file': isinstance(form[name].field.widget, forms.FileInput),
+            'is_multiple': isinstance(form[name].field.widget, forms.MultiWidget),
         }
 
         return config_value
@@ -238,7 +239,7 @@ class ConstanceAdmin(admin.ModelAdmin):
                 )
                 return HttpResponseRedirect('.')
         context = dict(
-            self.admin_site.each_context(request),
+            admin.site.each_context(),
             config_values=[],
             title=self.model._meta.app_config.verbose_name,
             app_label='constance',
